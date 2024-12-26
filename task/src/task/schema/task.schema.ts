@@ -10,7 +10,7 @@ export class Task {
   task_no: string;
 
   @Prop({ required: true })
-  org_id: Types.ObjectId;
+  org_id: string;
 
   @Prop({ required: true })
   project_id: Types.ObjectId;

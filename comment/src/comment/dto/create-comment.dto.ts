@@ -3,6 +3,9 @@ import { Types } from 'mongoose';
 
 export class CreateCommentDto {
   @IsNotEmpty()
+  org_id: Types.ObjectId;
+
+  @IsNotEmpty()
   user_id: Types.ObjectId;
 
   @IsNotEmpty()

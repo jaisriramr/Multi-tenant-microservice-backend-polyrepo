@@ -6,6 +6,9 @@ export type AttachmentDocument = Attachment & Document;
 @Schema({ timestamps: true })
 export class Attachment {
   @Prop({ required: true })
+  org_id: Types.ObjectId;
+
+  @Prop({ required: true })
   task_id: Types.ObjectId;
 
   @Prop({ required: true })

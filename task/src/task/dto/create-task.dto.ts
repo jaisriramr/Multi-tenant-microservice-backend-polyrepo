@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 
 export class CreateTaskDto {
   @IsNotEmpty()
-  org_id: Types.ObjectId;
+  org_id: string;
 
   @IsNotEmpty()
   task_no: string;

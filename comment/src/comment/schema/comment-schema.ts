@@ -6,6 +6,9 @@ export type CommentDocument = Comment & Document;
 @Schema({ timestamps: true })
 export class Comment {
   @Prop({ required: true })
+  org_id: Types.ObjectId;
+
+  @Prop({ required: true })
   user_id: Types.ObjectId;
 
   @Prop({ required: true })

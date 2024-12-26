@@ -7,6 +7,8 @@ import {
   Param,
   Post,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -14,14 +16,22 @@ import { Types } from 'mongoose';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { EventPattern, Payload } from '@nestjs/microservices';
 
+import { JwtAuthGuard } from 'src/config/auth.guard';
+import { jwtDecode } from 'jwt-decode';
+
 @Controller('task')
+@UseGuards(JwtAuthGuard)
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post()
-  async createTask(@Body() createTaskDto: CreateTaskDto) {
+  async createTask(@Body() createTaskDto: CreateTaskDto, @Req() req: Request) {
     try {
       const count = await this.taskService.getCount();
+
+      const userData: any = await jwtDecode(
+        req?.headers['authorization'].split(' ')[1],
+      );
 
       const words = createTaskDto.project_name.split(/\s+/);
       let task_no_prefix = '';
@@ -36,7 +46,7 @@ export class TaskController {
       const taskDto = {
         ...createTaskDto,
         task_no: task_no_prefix + '-' + String(count == 0 ? count + 1 : count),
-        org_id: new Types.ObjectId(createTaskDto.org_id),
+        org_id: userData?.org_id,
         project_id: new Types.ObjectId(createTaskDto.project_id),
         assignee: {
           name: createTaskDto.assignee.name,

@@ -3,6 +3,9 @@ import { Types } from 'mongoose';
 
 export class CreateSprintDto {
   @IsNotEmpty()
+  org_id: Types.ObjectId;
+
+  @IsNotEmpty()
   project_id: Types.ObjectId;
 
   @IsNotEmpty()

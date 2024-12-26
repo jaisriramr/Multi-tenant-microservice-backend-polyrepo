@@ -3,6 +3,9 @@ import { Types } from 'mongoose';
 
 export class CreateAttachmentDto {
   @IsNotEmpty()
+  org_id: Types.ObjectId;
+
+  @IsNotEmpty()
   task_id: Types.ObjectId;
 
   @IsNotEmpty()

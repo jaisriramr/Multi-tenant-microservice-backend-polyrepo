@@ -7,6 +7,9 @@ export type SprintDocument = Sprint & Document;
 @Schema({ timestamps: true })
 export class Sprint {
   @Prop({ required: true })
+  org_id: Types.ObjectId;
+
+  @Prop({ required: true })
   project_id: Types.ObjectId;
 
   @Prop({ required: true })
