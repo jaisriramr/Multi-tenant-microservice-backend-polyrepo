@@ -10,6 +10,18 @@ export class Project {
 
   @Prop({ required: true })
   name: string;
+
+  @Prop({ required: true })
+  key: string;
+
+  @Prop({})
+  sprints: [];
+
+  @Prop({})
+  owner_id: Types.ObjectId;
+
+  @Prop({ required: true })
+  status: string;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

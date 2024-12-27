@@ -1,0 +1,71 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  Param,
+  Post,
+} from '@nestjs/common';
+import { ProjectService } from './projects.service';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { Types } from 'mongoose';
+
+@Controller('project')
+export class ProjectController {
+  constructor(private readonly projectService: ProjectService) {}
+
+  @Post()
+  async createProject(@Body() createProjectDto: CreateProjectDto) {
+    try {
+      const words = createProjectDto.name.split(/\s+/);
+      let task_no_prefix = '';
+      if (words.length === 1) {
+        task_no_prefix = words[0].slice(0, 2);
+      } else if (words.length === 2) {
+        task_no_prefix = words[0][0] + words[1][0];
+      } else {
+        task_no_prefix = words[0][0] + words[1][0];
+      }
+
+      const projectData = {
+        ...createProjectDto,
+        key: task_no_prefix,
+        owner_id: new Types.ObjectId(createProjectDto?.owner_id),
+      };
+
+      console.log(projectData);
+
+      return await this.projectService.createProject(projectData);
+    } catch (err) {
+      throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+
+  @Get(':project_id')
+  async readProject(@Param('project_id') project_id: string) {
+    try {
+      return await this.projectService.readProject(project_id);
+    } catch (err) {
+      throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+
+  @Get('/org/:org_id')
+  async readOrgProjects(@Param('org_id') org_id: string) {
+    try {
+      return await this.projectService.readAllProject(org_id);
+    } catch (err) {
+      throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+
+  @Delete(':project_id')
+  async deleteProject(@Param('project_id') project_id: string) {
+    try {
+      return await this.projectService.deleteProject(project_id);
+    } catch (err) {
+      throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+}
