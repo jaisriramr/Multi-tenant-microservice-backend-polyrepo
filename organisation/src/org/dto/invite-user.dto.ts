@@ -1,13 +1,15 @@
 import { IsNotEmpty } from 'class-validator';
-import { Types } from 'mongoose';
 
-export class CreateOrgDto {
+export class InviteUserDto {
+  @IsNotEmpty()
+  email: string;
+
   @IsNotEmpty()
   name: string;
 
   @IsNotEmpty()
-  display_name: string;
+  roles: string;
 
   @IsNotEmpty()
-  owner_id: Types.ObjectId;
+  org_id: string;
 }

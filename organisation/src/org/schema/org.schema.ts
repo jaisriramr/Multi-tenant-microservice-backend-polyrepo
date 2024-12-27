@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export type OrgDocument = Org & Document;
 @Schema({ timestamps: true })
@@ -17,7 +17,7 @@ export class Org {
   logo_url: string;
 
   @Prop({ required: true })
-  owner_id: string;
+  owner_id: Types.ObjectId;
 }
 
 export const OrgSchema = SchemaFactory.createForClass(Org);

@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 
 export class CreateSprintDto {
   @IsNotEmpty()
-  org_id: Types.ObjectId;
+  org_id: string;
 
   @IsNotEmpty()
   project_id: Types.ObjectId;
