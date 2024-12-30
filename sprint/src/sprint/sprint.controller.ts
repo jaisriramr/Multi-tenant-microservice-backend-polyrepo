@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpException,
+  Inject,
   Param,
   Post,
   Put,
@@ -12,10 +13,14 @@ import { SprintService } from './sprint.service';
 import { CreateSprintDto } from './dto/create-sprint.dto';
 import { Types } from 'mongoose';
 import { UpdateSprintDto } from './dto/update-sprint.dto';
+import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 
 @Controller('sprint')
 export class SprintController {
-  constructor(private readonly sprintService: SprintService) {}
+  constructor(
+    private readonly sprintService: SprintService,
+    @Inject('PROJECT_SERVICE') private readonly projectService: ClientProxy,
+  ) {}
 
   @Post()
   async createSprint(@Body() createSprintDto: CreateSprintDto) {
@@ -27,7 +32,11 @@ export class SprintController {
         updated_by: new Types.ObjectId(createSprintDto.updated_by),
       };
 
-      return await this.sprintService.createSprint(sprintDto);
+      const sprintOutput = await this.sprintService.createSprint(sprintDto);
+      if (sprintOutput) {
+        this.projectService.emit('sprint_created', sprintOutput);
+      }
+      return sprintOutput;
     } catch (err) {
       throw new HttpException('Internal Server Error ' + err, 500);
     }
@@ -78,6 +87,15 @@ export class SprintController {
       return await this.sprintService.updateSprint(sprint_id, updateSprintDto);
     } catch (err) {
       throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+
+  @EventPattern('task_created')
+  async handleTaskCreated(@Payload() data: any) {
+    console.log('Task Created ', data);
+
+    if (data) {
+      this.sprintService.appendTaskToSprint(data?.sprint_id, data?._id);
     }
   }
 }

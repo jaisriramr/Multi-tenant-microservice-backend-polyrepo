@@ -37,4 +37,12 @@ export class ProjectRepository {
       { new: true },
     );
   }
+
+  async appendSprintId(project_id: string, sprint_id: string): Promise<any> {
+    return await this.projectModel.findOneAndUpdate(
+      { _id: new Types.ObjectId(project_id) },
+      { $push: { sprints: new Types.ObjectId(sprint_id) } },
+      { new: true },
+    );
+  }
 }

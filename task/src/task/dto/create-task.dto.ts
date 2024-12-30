@@ -15,6 +15,9 @@ export class CreateTaskDto {
   project_id: Types.ObjectId;
 
   @IsNotEmpty()
+  sprint_id: Types.ObjectId;
+
+  @IsNotEmpty()
   title: string;
 
   @IsNotEmpty()

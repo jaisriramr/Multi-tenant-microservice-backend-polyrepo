@@ -12,8 +12,8 @@ export class Task {
   @Prop({ required: true })
   org_id: string;
 
-  @Prop({ required: true })
-  project_id: Types.ObjectId;
+  // @Prop({ required: true })
+  // project_id: Types.ObjectId;
 
   @Prop({ required: true })
   title: string;

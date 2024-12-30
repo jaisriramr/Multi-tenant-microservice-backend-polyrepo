@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SprintModule } from './sprint/sprint.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { MongooseModule } from '@nestjs/mongoose';
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MONGO_URI, { minPoolSize: 50 }),
+    SprintModule,
   ],
   controllers: [AppController],
   providers: [AppService],

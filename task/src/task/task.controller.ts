@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpException,
+  Inject,
   Param,
   Post,
   Put,
@@ -14,7 +15,7 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { Types } from 'mongoose';
 import { UpdateTaskDto } from './dto/update-task.dto';
-import { EventPattern, Payload } from '@nestjs/microservices';
+import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 
 import { JwtAuthGuard } from 'src/config/auth.guard';
 import { jwtDecode } from 'jwt-decode';
@@ -22,7 +23,10 @@ import { jwtDecode } from 'jwt-decode';
 @Controller('task')
 @UseGuards(JwtAuthGuard)
 export class TaskController {
-  constructor(private readonly taskService: TaskService) {}
+  constructor(
+    private readonly taskService: TaskService,
+    @Inject('SPRINT_SERVICE') private readonly sprintService: ClientProxy,
+  ) {}
 
   @Post()
   async createTask(@Body() createTaskDto: CreateTaskDto, @Req() req: Request) {
@@ -47,14 +51,19 @@ export class TaskController {
         ...createTaskDto,
         task_no: task_no_prefix + '-' + String(count == 0 ? count + 1 : count),
         org_id: userData?.org_id,
-        project_id: new Types.ObjectId(createTaskDto.project_id),
+        project_id: new Types.ObjectId(createTaskDto?.project_id),
+        sprint_id: new Types.ObjectId(createTaskDto?.sprint_id),
         assignee: {
           name: createTaskDto.assignee.name,
-          user_id: new Types.ObjectId(createTaskDto.assignee.user_id),
+          user_id: new Types.ObjectId(createTaskDto?.assignee?.user_id),
         },
       };
 
-      return await this.taskService.createTask(taskDto);
+      const response1 = await this.taskService.createTask(taskDto);
+      if (response1) {
+        this.sprintService.emit('task_created', response1);
+      }
+      return response1;
     } catch (err) {
       throw new HttpException('Internal Server Error ' + err, 500);
     }

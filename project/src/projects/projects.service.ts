@@ -25,4 +25,11 @@ export class ProjectService {
   async updateProject(project_id: string, update: any): Promise<any> {
     return await this.projectRepository.update(project_id, update);
   }
+
+  async appendSprintToProject(
+    project_id: string,
+    sprint_id: string,
+  ): Promise<any> {
+    return await this.projectRepository.appendSprintId(project_id, sprint_id);
+  }
 }

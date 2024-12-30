@@ -1,3 +1,4 @@
+import { EventPattern, Payload } from '@nestjs/microservices';
 import {
   Body,
   Controller,
@@ -34,8 +35,6 @@ export class ProjectController {
         owner_id: new Types.ObjectId(createProjectDto?.owner_id),
       };
 
-      console.log(projectData);
-
       return await this.projectService.createProject(projectData);
     } catch (err) {
       throw new HttpException('Internal Server Error ' + err, 500);
@@ -66,6 +65,15 @@ export class ProjectController {
       return await this.projectService.deleteProject(project_id);
     } catch (err) {
       throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+
+  @EventPattern('sprint_created')
+  async handleSprintCreated(@Payload() data: any) {
+    console.log('SPrint created ', data);
+
+    if (data) {
+      this.projectService.appendSprintToProject(data?.project_id, data?._id);
     }
   }
 }
