@@ -21,6 +21,15 @@ export class UserRepository {
     return await this.userModel.find({ email: email });
   }
 
+  async readByEmail(email: string): Promise<any> {
+    const response = await this.userModel.findOne({ email: email });
+    console.log(response, email);
+    if (response) {
+      return response;
+    }
+    // return await this.userModel.findOne({ email: email });
+  }
+
   async getUsersOfOrg(org_id: string): Promise<any> {
     return await this.userModel.find({ org_id: new Types.ObjectId(org_id) });
   }

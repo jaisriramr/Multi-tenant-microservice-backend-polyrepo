@@ -26,6 +26,8 @@ export class TaskController {
   constructor(
     private readonly taskService: TaskService,
     @Inject('SPRINT_SERVICE') private readonly sprintService: ClientProxy,
+    @Inject('NOTIFICATION_SERVICE')
+    private readonly notificationService: ClientProxy,
   ) {}
 
   @Post()
@@ -62,6 +64,11 @@ export class TaskController {
       const response1 = await this.taskService.createTask(taskDto);
       if (response1) {
         this.sprintService.emit('task_created', response1);
+        // this.sprintService.emit('notification_created', {
+        //   collection: 'task',
+        //   type: 'create',
+        //   data: JSON.stringify(response1),
+        // });
       }
       return response1;
     } catch (err) {

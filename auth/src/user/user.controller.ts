@@ -55,6 +55,19 @@ export class UserController {
     }
   }
 
+  @Get('/email/:email')
+  async readUserEmail(@Param('email') email: string) {
+    try {
+      const data = await this.userService.readUserByEmail(email);
+
+      if (data) {
+        return data;
+      }
+    } catch (err) {
+      throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+
   @Get('/orgs/:org_id')
   async getUserByOrg(@Param('org_id') org_id: string) {
     try {

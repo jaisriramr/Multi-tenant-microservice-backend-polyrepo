@@ -15,6 +15,10 @@ export class UserService {
     return await this.userRepository.read(user_id);
   }
 
+  async readUserByEmail(email: string): Promise<any> {
+    return await this.userRepository.readByEmail(email);
+  }
+
   async checkUser(email: string): Promise<any> {
     return await this.userRepository.checkUser(email);
   }
