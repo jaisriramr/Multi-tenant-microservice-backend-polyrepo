@@ -7,6 +7,7 @@ import {
   HttpException,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ProjectService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -32,6 +33,7 @@ export class ProjectController {
       const projectData = {
         ...createProjectDto,
         key: task_no_prefix,
+        org_id: new Types.ObjectId(createProjectDto.org_id),
         owner_id: new Types.ObjectId(createProjectDto?.owner_id),
       };
 
@@ -56,6 +58,27 @@ export class ProjectController {
       return await this.projectService.readAllProject(org_id);
     } catch (err) {
       throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+
+  @Get('/list/by/org/:org_id')
+  async readOrgProjectsLimit3(@Param('org_id') org_id: string) {
+    try {
+      return await this.projectService.readAllProjectByOrgIdLimit3(org_id);
+    } catch (err) {
+      throw new HttpException('Internal Server Err ', 500);
+    }
+  }
+
+  @Get('/list/projects/:org_id')
+  async listProjectByPagination(
+    @Param('org_id') org_id: string,
+    @Query('page') page: string,
+  ) {
+    try {
+      return await this.projectService.getProjects(Number(page), org_id);
+    } catch (err) {
+      throw new HttpException('Internal Server Error ', 500);
     }
   }
 

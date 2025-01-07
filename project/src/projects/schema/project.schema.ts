@@ -14,8 +14,14 @@ export class Project {
   @Prop({ required: true })
   key: string;
 
+  @Prop({ required: true })
+  type: string;
+
   @Prop({})
   sprints: [];
+
+  @Prop({})
+  members: [];
 
   @Prop({})
   owner_id: Types.ObjectId;

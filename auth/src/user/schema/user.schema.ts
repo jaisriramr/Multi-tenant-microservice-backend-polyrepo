@@ -14,11 +14,17 @@ export class User {
   @Prop({ required: true })
   email: string;
 
-  @Prop({ required: true })
-  picture: string;
+  @Prop({})
+  passwordHash: string;
+
+  @Prop({})
+  roles: Types.ObjectId[];
 
   @Prop({ required: true })
-  sub: string;
+  status: string;
+
+  @Prop({})
+  picture: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

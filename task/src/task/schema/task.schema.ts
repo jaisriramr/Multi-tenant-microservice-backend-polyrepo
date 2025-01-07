@@ -10,6 +10,9 @@ export class Task {
   task_no: string;
 
   @Prop({ required: true })
+  type: string;
+
+  @Prop({ required: true })
   org_id: string;
 
   // @Prop({ required: true })

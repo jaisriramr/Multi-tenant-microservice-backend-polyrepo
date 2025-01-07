@@ -5,19 +5,14 @@ import { MailTriggerervice } from './mail.service';
 export class MailController {
   constructor(private readonly mailerService: MailTriggerervice) {}
 
-  @Post('send-welcome')
-  async sendWelcomeEmail(
-    @Body('to') to: string,
-    @Body('from') from: string,
-    @Body('subject') subject: string,
-    @Body('body') body: string,
+  @Post('send')
+  async sendMail(
+    @Body() body: { email: string; subject: string; message: string },
   ) {
     try {
-      await this.mailerService.sendEmail(to, from, subject, body);
-      return { message: 'Email sent successfully!' };
+      return await this.mailerService.sendMail(body.email);
     } catch (err) {
-      console.log('EE ', err);
-      throw new HttpException('Internal Server Err ', 500);
+      throw new HttpException(err?.response, err?.status);
     }
   }
 }

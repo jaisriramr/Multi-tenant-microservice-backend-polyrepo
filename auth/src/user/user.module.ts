@@ -5,6 +5,7 @@ import { User, UserSchema } from './schema/user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
+import { Role, RoleSchema } from './schema/role.schema';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UserRepository } from './user.repository';
       },
     ]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Role.name, schema: RoleSchema }]),
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository],

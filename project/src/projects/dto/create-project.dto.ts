@@ -12,6 +12,9 @@ export class CreateProjectDto {
   sprints: [];
 
   @IsNotEmpty()
+  type: string;
+
+  @IsNotEmpty()
   owner_id: Types.ObjectId;
 
   @IsNotEmpty()

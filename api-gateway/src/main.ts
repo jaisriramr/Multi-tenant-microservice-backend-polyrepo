@@ -36,8 +36,12 @@ async function bootstrap() {
   server.use(
     '/project',
     createProxyMiddleware({
-      target: 'http://localhost:3003', // Replace with Project Service URL
+      target: 'http://localhost:3009', // Replace with Project Service URL
       changeOrigin: true,
+      pathRewrite: (path) => {
+        const rewrittenPath = path.replace(/^\/project/, '');
+        return '/project' + rewrittenPath;
+      },
     }),
   );
 

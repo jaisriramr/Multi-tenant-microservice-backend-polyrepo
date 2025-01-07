@@ -1,48 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { MailerService } from '@nestjs-modules/mailer';
-import { SESClient, SendRawEmailCommand } from '@aws-sdk/client-ses';
+import * as sgMail from '@sendgrid/mail';
 
 @Injectable()
 export class MailTriggerervice {
-  private sesClient: SESClient;
-
   constructor() {
-    this.sesClient = new SESClient({
-      region: 'us-east-1', // Replace with your region
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      },
-    });
+    sgMail.setApiKey(process.env.SENDGRID_APIKEY);
   }
 
-  async sendEmail(
-    to: string,
-    from: string,
-    subject: string,
-    body: string,
-  ): Promise<void> {
-    const params = {
-      RawMessage: {
-        Data: Buffer.from(
-          `From: ${from}
-  To: ${to}
-  Subject: ${subject}
-  Content-Type: text/html; charset=UTF-8
-  
-  ${body}`,
-        ),
-      },
+  async sendMail(to: string) {
+    const msg = {
+      to: to,
+      from: process.env.SENDGRID_FROM, // Use the email address or domain you verified above
+      subject: 'Sending with Twilio SendGrid is Fun',
+      text: 'and easy to do anywhere, even with Node.js',
+      html: '<strong>and easy to do anywhere, even with Node.js</strong>',
     };
+    console.log(msg);
+    const response = sgMail
+      .send(msg)
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
 
-    const command = new SendRawEmailCommand(params);
-
-    try {
-      const response = await this.sesClient.send(command);
-      console.log('Email sent successfully:', response);
-    } catch (error) {
-      console.error('Error sending email:', error);
-      throw error;
-    }
+    return response;
   }
 }

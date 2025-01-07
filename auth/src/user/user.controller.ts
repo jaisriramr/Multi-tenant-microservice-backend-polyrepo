@@ -14,7 +14,11 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 import axios from 'axios';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import * as bcrypt from 'bcrypt';
+import { CreateRoleDto } from './dto/create-role.dto';
+import { Types } from 'mongoose';
+import { LoginUserDto } from './dto/login-user.dto';
+import * as jsonwebtoken from 'jsonwebtoken';
 @Controller('user')
 export class UserController {
   constructor(
@@ -26,10 +30,93 @@ export class UserController {
   async handleOrgCreated(@Payload() data: any) {
     console.log(data);
 
-    await this.userService.updateOrgID(data?.owner_id, data?.org_id);
+    await this.userService.updateOrgID(data?.owner_id, data?._id);
   }
 
-  @Post()
+  @Post('/role')
+  async createRole(@Body() createRoleDto: CreateRoleDto): Promise<any> {
+    try {
+      return await this.userService.createRole(createRoleDto);
+    } catch (err) {
+      throw new HttpException(err?.response, err?.status);
+    }
+  }
+
+  @Get('/role/:roleID')
+  async readRole(@Param('roleID') roleID: string): Promise<any> {
+    try {
+      return await this.userService.readSingleRole(roleID);
+    } catch (err) {
+      throw new HttpException(err?.response, err?.status);
+    }
+  }
+
+  @Get('/roles')
+  async getAllRoles(): Promise<any> {
+    try {
+      return await this.userService.readAllRole();
+    } catch (err) {
+      throw new HttpException(err?.response, err?.status);
+    }
+  }
+
+  @Delete('/role/:roleID')
+  async deleteRole(@Param('roleID') roleID: string): Promise<any> {
+    try {
+      return await this.userService.deleteRole(roleID);
+    } catch (err) {
+      throw new HttpException(err?.response, err?.status);
+    }
+  }
+
+  @Put('/role/:roleID')
+  async updateRole(
+    @Param('roleID') roleID: string,
+    updateRoleDto: CreateRoleDto,
+  ): Promise<any> {
+    try {
+      return await this.userService.updateRole(roleID, updateRoleDto);
+    } catch (err) {
+      throw new HttpException(err?.response, err?.status);
+    }
+  }
+
+  @Post('/login')
+  async loginUser(@Body() loginUserDto: LoginUserDto): Promise<any> {
+    try {
+      const user = await this.userService.readUserByEmail(loginUserDto.email);
+      if (user) {
+        const passwordCompare = await bcrypt.compare(
+          loginUserDto.password,
+          user.passwordHash,
+        );
+        if (passwordCompare) {
+          user.passwordHash = undefined;
+          const response = await this.userService.userAggreateOrgsandRoles(
+            user?.email,
+          );
+          if (response) {
+            const jwt = await jsonwebtoken.sign(
+              response,
+              process.env.PRIVATEKEY,
+              {
+                expiresIn: '1h',
+              },
+            );
+            return jwt;
+          }
+        } else {
+          throw new HttpException('Password is incorrect!', 401);
+        }
+      } else {
+        throw new HttpException('User not found!', 404);
+      }
+    } catch (err) {
+      throw new HttpException(err?.response, err?.status);
+    }
+  }
+
+  @Post('/register')
   async createUser(@Body() createUserDto: CreateUserDto): Promise<any> {
     try {
       const checkUser = await this.userService.checkUser(createUserDto.email);
@@ -37,12 +124,23 @@ export class UserController {
       if (checkUser?.length > 0) {
         throw new HttpException('User Already Exist!', 401);
       } else {
-        const user = await this.userService.createUser(createUserDto);
+        const roles: any = createUserDto.roles;
+
+        const hashedPassword = await bcrypt.hash(
+          createUserDto.password,
+          Number(process.env.AUTH_SALT),
+        );
+
+        const user = await this.userService.createUser({
+          ...createUserDto,
+          passwordHash: hashedPassword,
+          roles: [new Types.ObjectId(roles[0])],
+        });
         this.orgClient.emit('user_created', user);
         return user;
       }
     } catch (err) {
-      throw new HttpException('Internal Server Err ' + err, 500);
+      throw new HttpException(err?.response, err?.status);
     }
   }
 

@@ -20,6 +20,30 @@ export class ProjectRepository {
     });
   }
 
+  async getProjects(page: number, org_id: string): Promise<Project[]> {
+    const limit = 10; // Number of items per page
+    const skip = (page - 1) * limit; // Skip items for previous pages
+
+    return this.projectModel
+      .find({ org_id: new Types.ObjectId(org_id) })
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  }
+
+  async getProjectsCountbyOrg(org_id: string): Promise<any> {
+    return this.projectModel
+      .find({ org_id: new Types.ObjectId(org_id) })
+      .countDocuments();
+  }
+
+  async readAllProjectByOrgIdLimit3(org_id: string): Promise<any> {
+    return await this.projectModel
+      .find({ org_id: new Types.ObjectId(org_id) })
+      .limit(3)
+      .exec();
+  }
+
   async readAllProjectsOfOrg(org_id: string): Promise<any> {
     return await this.projectModel.find({ org_id: org_id });
   }

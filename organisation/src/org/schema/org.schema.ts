@@ -5,9 +5,6 @@ export type OrgDocument = Org & Document;
 @Schema({ timestamps: true })
 export class Org {
   @Prop({ required: true })
-  org_id: string;
-
-  @Prop({ required: true })
   name: string;
 
   @Prop({ required: true })

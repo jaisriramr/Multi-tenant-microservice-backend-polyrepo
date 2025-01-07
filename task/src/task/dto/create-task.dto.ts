@@ -6,6 +6,9 @@ export class CreateTaskDto {
   org_id: string;
 
   @IsNotEmpty()
+  type: string;
+
+  @IsNotEmpty()
   task_no: string;
 
   @IsNotEmpty()

@@ -2,9 +2,6 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 import { Types } from 'mongoose';
 
 export class CreateUserDto {
-  @IsOptional()
-  org_id: Types.ObjectId;
-
   @IsNotEmpty()
   name: string;
 
@@ -12,8 +9,14 @@ export class CreateUserDto {
   email: string;
 
   @IsNotEmpty()
-  picture: string;
+  password: string;
+
+  @IsOptional()
+  passwordHash: string;
 
   @IsNotEmpty()
-  sub: string;
+  roles: Types.ObjectId[];
+
+  @IsNotEmpty()
+  status: string;
 }
