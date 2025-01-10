@@ -51,7 +51,7 @@ export class SprintController {
     }
   }
 
-  @Get(':project_id')
+  @Get('/project/:project_id')
   async listSprintByProjectId(@Param('project_id') project_id: string) {
     try {
       return await this.sprintService.listProjectSprint(project_id);
@@ -69,7 +69,7 @@ export class SprintController {
     }
   }
 
-  @Delete(':project_id')
+  @Delete('/project/:project_id')
   async deleteProjectSprints(@Param('project_id') project_id: string) {
     try {
       return await this.sprintService.deleteProjectSprints(project_id);

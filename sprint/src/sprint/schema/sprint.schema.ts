@@ -10,6 +10,9 @@ export class Sprint {
   org_id: string;
 
   @Prop({ required: true })
+  is_backlog: boolean;
+
+  @Prop({ required: true })
   project_id: Types.ObjectId;
 
   @Prop({ required: true })
@@ -30,10 +33,10 @@ export class Sprint {
   @Prop({ required: true })
   updated_by: Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({})
   start_date: string;
 
-  @Prop({ required: true })
+  @Prop({})
   end_date: string;
 }
 

@@ -47,6 +47,7 @@ export class ProjectService {
             .then((response) => {
               const user = response.data;
               const projectObj = {
+                _id: project._id,
                 name: project.name,
                 key: project.key,
                 type: project.type,
@@ -58,6 +59,7 @@ export class ProjectService {
                   name: user.name,
                   email: user.email,
                   roles: user.roles,
+                  picture: user.picture,
                   status: user.status,
                   org_id: user.org_id,
                 },

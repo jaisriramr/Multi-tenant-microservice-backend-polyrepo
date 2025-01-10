@@ -4,6 +4,7 @@ import { Task, TaskDocument } from './schema/task.schema';
 import { Model, Types } from 'mongoose';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { FilterTaskDto } from './dto/filter-task.dto';
 
 @Injectable()
 export class TaskRepository {
@@ -19,6 +20,25 @@ export class TaskRepository {
 
   async readSingleTask(task_id: string): Promise<any> {
     return await this.taskModel.findOne({ _id: new Types.ObjectId(task_id) });
+  }
+
+  async filterTask(filterTaskDto: FilterTaskDto): Promise<any> {
+    const query: any = {
+      'assignee.user_id': { $in: filterTaskDto.assignees_ids },
+    };
+
+    if (filterTaskDto.title) {
+      query.title = {
+        $regex: filterTaskDto.title ? filterTaskDto.title : '',
+        $options: 'i',
+      };
+    }
+    if (filterTaskDto.status) {
+      query.status = filterTaskDto.status;
+    }
+    console.log('FILLL ', query);
+
+    return await this.taskModel.find(query);
   }
 
   async listUserTasks(user_id: string): Promise<any> {

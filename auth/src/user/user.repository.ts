@@ -60,7 +60,7 @@ export class UserRepository {
   }
 
   async getUsersOfOrg(org_id: string): Promise<any> {
-    return await this.userModel.find({ org_id: org_id });
+    return await this.userModel.find({ org_id: new Types.ObjectId(org_id) });
   }
 
   async updateUser(
@@ -109,6 +109,7 @@ export class UserRepository {
           email: 1,
           status: 1,
           org_id: 1,
+          picture: 1,
           roles: {
             name: 1,
             permissions: 1,

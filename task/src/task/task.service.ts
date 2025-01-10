@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { TaskRepository } from './task.repository';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { FilterTaskDto } from './dto/filter-task.dto';
 
 @Injectable()
 export class TaskService {
@@ -13,6 +14,10 @@ export class TaskService {
 
   async getCount(): Promise<any> {
     return await this.taskRepository.getCount();
+  }
+
+  async filterTask(filterTaskDto: FilterTaskDto): Promise<any> {
+    return await this.taskRepository.filterTask(filterTaskDto);
   }
 
   async readSingleTask(task_id: string): Promise<any> {

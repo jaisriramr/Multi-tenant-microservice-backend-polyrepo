@@ -13,7 +13,7 @@ export class Task {
   type: string;
 
   @Prop({ required: true })
-  org_id: string;
+  org_id: Types.ObjectId;
 
   // @Prop({ required: true })
   // project_id: Types.ObjectId;
@@ -33,12 +33,14 @@ export class Task {
   @Prop({ type: Object })
   assignee: {
     name: string;
+    picture: string;
     user_id: Types.ObjectId;
   };
 
   @Prop({ type: Object })
   reporter: {
     name: string;
+    picture: string;
     user_id: Types.ObjectId;
   };
 

@@ -19,9 +19,10 @@ import { ClientProxy, EventPattern, Payload } from '@nestjs/microservices';
 
 import { JwtAuthGuard } from 'src/config/auth.guard';
 import { jwtDecode } from 'jwt-decode';
+import { FilterTaskDto } from './dto/filter-task.dto';
 
 @Controller('task')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class TaskController {
   constructor(
     private readonly taskService: TaskService,
@@ -35,9 +36,9 @@ export class TaskController {
     try {
       const count = await this.taskService.getCount();
 
-      const userData: any = await jwtDecode(
-        req?.headers['authorization'].split(' ')[1],
-      );
+      // const userData: any = await jwtDecode(
+      //   req?.headers['authorization'].split(' ')[1],
+      // );
 
       const words = createTaskDto.project_name.split(/\s+/);
       let task_no_prefix = '';
@@ -52,11 +53,12 @@ export class TaskController {
       const taskDto = {
         ...createTaskDto,
         task_no: task_no_prefix + '-' + String(count == 0 ? count + 1 : count),
-        org_id: userData?.org_id,
+        org_id: new Types.ObjectId(createTaskDto?.org_id),
         project_id: new Types.ObjectId(createTaskDto?.project_id),
         sprint_id: new Types.ObjectId(createTaskDto?.sprint_id),
         assignee: {
           name: createTaskDto.assignee.name,
+          picture: createTaskDto?.assignee?.picture,
           user_id: new Types.ObjectId(createTaskDto?.assignee?.user_id),
         },
       };
@@ -73,6 +75,24 @@ export class TaskController {
       return response1;
     } catch (err) {
       throw new HttpException('Internal Server Error ' + err, 500);
+    }
+  }
+
+  @Post('/filter')
+  async FilterTasks(@Body() filterTaskDto: FilterTaskDto) {
+    try {
+      const assignee_ids = [];
+      filterTaskDto.assignees_ids.map((id) =>
+        assignee_ids.push(new Types.ObjectId(id)),
+      );
+      console.log(assignee_ids);
+      return await this.taskService.filterTask({
+        ...filterTaskDto,
+        assignees_ids: assignee_ids,
+      });
+    } catch (err) {
+      console.log('ERR ', err);
+      throw new HttpException('Internal External Err ', 500);
     }
   }
 
@@ -156,12 +176,16 @@ export class TaskController {
 
       if (updateDto?.reporter?.name && updateDto?.reporter?.user_id) {
         updateDto.reporter.name = updateDto.reporter.name;
-        updateDto.reporter.user_id = updateDto.reporter.user_id;
+        updateDto.reporter.user_id = new Types.ObjectId(
+          updateDto.reporter.user_id,
+        );
       }
 
       if (updateDto?.assignee?.name && updateDto?.assignee?.user_id) {
         updateDto.assignee.name = updateDto.assignee.name;
-        updateDto.assignee.user_id = updateDto.assignee.user_id;
+        updateDto.assignee.user_id = new Types.ObjectId(
+          updateDto.assignee.user_id,
+        );
       }
 
       return await this.taskService.updateTask(task_id, updateDto);

@@ -45,6 +45,32 @@ async function bootstrap() {
     }),
   );
 
+  // proxy for task service
+  server.use(
+    '/task',
+    createProxyMiddleware({
+      target: 'http://localhost:3002', // Replace with Project Service URL
+      changeOrigin: true,
+      pathRewrite: (path) => {
+        const rewrittenPath = path.replace(/^\/task/, '');
+        return '/task' + rewrittenPath;
+      },
+    }),
+  );
+
+  // proxy for sprint service
+  server.use(
+    '/sprint',
+    createProxyMiddleware({
+      target: 'http://localhost:3004', // Replace with Project Service URL
+      changeOrigin: true,
+      pathRewrite: (path) => {
+        const rewrittenPath = path.replace(/^\/sprint/, '');
+        return '/sprint' + rewrittenPath;
+      },
+    }),
+  );
+
   await app.listen(3000, () => console.log('Api Gateway'));
 }
 bootstrap();
