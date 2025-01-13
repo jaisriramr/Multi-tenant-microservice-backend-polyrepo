@@ -81,15 +81,24 @@ export class TaskController {
   @Post('/filter')
   async FilterTasks(@Body() filterTaskDto: FilterTaskDto) {
     try {
-      const assignee_ids = [];
-      filterTaskDto.assignees_ids.map((id) =>
-        assignee_ids.push(new Types.ObjectId(id)),
-      );
-      console.log(assignee_ids);
-      return await this.taskService.filterTask({
+      let assignee_ids = [];
+      if (filterTaskDto?.assignees_ids) {
+        filterTaskDto.assignees_ids.map((id) =>
+          assignee_ids.push(new Types.ObjectId(id)),
+        );
+      }
+
+      let query = {
         ...filterTaskDto,
-        assignees_ids: assignee_ids,
-      });
+      };
+
+      if (assignee_ids.length > 0) {
+        query.assignees_ids = assignee_ids;
+      } else {
+        query.assignees_ids = null;
+      }
+
+      return await this.taskService.filterTask(query);
     } catch (err) {
       console.log('ERR ', err);
       throw new HttpException('Internal External Err ', 500);

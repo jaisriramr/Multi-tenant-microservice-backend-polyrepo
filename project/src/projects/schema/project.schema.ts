@@ -28,6 +28,9 @@ export class Project {
 
   @Prop({ required: true })
   status: string;
+
+  @Prop({})
+  lastAccessed: Date;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

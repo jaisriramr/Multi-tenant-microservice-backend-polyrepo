@@ -37,6 +37,24 @@ export class ProjectRepository {
       .countDocuments();
   }
 
+  async updateLastAccessed(projectId: string): Promise<any> {
+    return this.projectModel
+      .findByIdAndUpdate(
+        { _id: new Types.ObjectId(projectId) },
+        { lastAccessedAt: new Date() },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async getRecentlyAccessedProjects(org_id: string): Promise<Project[]> {
+    return this.projectModel
+      .find({ org_id: new Types.ObjectId(org_id) })
+      .sort({ lastAccessedAt: -1 })
+      .limit(3)
+      .exec();
+  }
+
   async readAllProjectByOrgIdLimit3(org_id: string): Promise<any> {
     return await this.projectModel
       .find({ org_id: new Types.ObjectId(org_id) })

@@ -9,7 +9,10 @@ export class FilterTaskDto {
   assignees_ids: Types.ObjectId[];
 
   @IsOptional()
-  status: string;
+  type: string;
+
+  @IsNotEmpty()
+  sprint_id: Types.ObjectId;
 
   @IsOptional()
   epics_id: Types.ObjectId[];

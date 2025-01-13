@@ -23,9 +23,13 @@ export class TaskRepository {
   }
 
   async filterTask(filterTaskDto: FilterTaskDto): Promise<any> {
-    const query: any = {
-      'assignee.user_id': { $in: filterTaskDto.assignees_ids },
-    };
+    let query: any = {};
+
+    if (filterTaskDto.assignees_ids && filterTaskDto.assignees_ids.length > 0) {
+      query = {
+        'assignee.user_id': { $in: filterTaskDto.assignees_ids },
+      };
+    }
 
     if (filterTaskDto.title) {
       query.title = {
@@ -33,10 +37,12 @@ export class TaskRepository {
         $options: 'i',
       };
     }
-    if (filterTaskDto.status) {
-      query.status = filterTaskDto.status;
+    if (filterTaskDto.type) {
+      query.type = filterTaskDto.type;
     }
-    console.log('FILLL ', query);
+    query.sprint_id = new Types.ObjectId(filterTaskDto.sprint_id);
+
+    console.log('qUERY ', query);
 
     return await this.taskModel.find(query);
   }
