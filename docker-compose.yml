@@ -14,12 +14,12 @@ services:
   #ApiGateway Microservice
   apigateway:
     build:
-      context: ./api-node-gateway
-    container_name: api-node-gateway-service
+      context: ./api-gateway-node
+    container_name: api-gateway-node-service
     environment:
       - RABBITMQ_URL=amqp://rabbitmq:5672
     env_file:
-      - ./api-node-gateway/.env
+      - ./api-gateway-node/.env
     ports:
       - "3000:3000"
     depends_on:
