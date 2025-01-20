@@ -25,13 +25,17 @@ export class SprintController {
   @Post()
   async createSprint(@Body() createSprintDto: CreateSprintDto) {
     try {
+      const count = await this.sprintService.getSprintCount(
+        createSprintDto.org_id,
+      );
+
       const sprintDto = {
         ...createSprintDto,
+        name: 'Sprint ' + Number((count ? count : 0) + 1),
         project_id: new Types.ObjectId(createSprintDto.project_id),
         created_by: new Types.ObjectId(createSprintDto.created_by),
         updated_by: new Types.ObjectId(createSprintDto.updated_by),
       };
-
       const sprintOutput = await this.sprintService.createSprint(sprintDto);
       if (sprintOutput) {
         this.projectService.emit('sprint_created', sprintOutput);

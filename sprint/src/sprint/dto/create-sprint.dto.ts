@@ -8,7 +8,7 @@ export class CreateSprintDto {
   @IsNotEmpty()
   project_id: Types.ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   name: string;
 
   @IsOptional()
@@ -23,9 +23,9 @@ export class CreateSprintDto {
   @IsNotEmpty()
   updated_by: Types.ObjectId;
 
-  @IsNotEmpty()
+  @IsOptional()
   start_date: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   end_date: string;
 }

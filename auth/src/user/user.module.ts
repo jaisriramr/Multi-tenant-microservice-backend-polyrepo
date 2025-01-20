@@ -14,7 +14,7 @@ import { Role, RoleSchema } from './schema/role.schema';
         name: 'ORG_SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://localhost:5672'],
+          urls: ['amqp://rabbitmq:5672'],
           queue: 'org_queue',
           queueOptions: {
             durable: false,

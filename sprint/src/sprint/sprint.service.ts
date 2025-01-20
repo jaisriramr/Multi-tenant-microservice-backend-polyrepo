@@ -37,4 +37,8 @@ export class SprintService {
   async appendTaskToSprint(sprint_id: string, task_id: string): Promise<any> {
     return await this.sprintRepository.appendTaskToSprint(sprint_id, task_id);
   }
+
+  async getSprintCount(org_id: string): Promise<any> {
+    return await this.sprintRepository.getSprintCount(org_id);
+  }
 }

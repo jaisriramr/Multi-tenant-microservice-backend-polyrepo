@@ -1,0 +1,176 @@
+version: '3.8'
+
+services:
+  # RabbitMQ service
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    container_name: rabbitmq-container
+    ports:
+      - "15672:15672"  # RabbitMQ Web UI
+      - "5672:5672"    # RabbitMQ AMQP protocol
+    networks:
+      - app-network
+
+  #ApiGateway Microservice
+  apigateway:
+    build:
+      context: ./api-node-gateway
+    container_name: api-node-gateway-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./api-node-gateway/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  # Auth microservice
+  auth:
+    build:
+      context: ./auth
+    container_name: auth-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./auth/.env.dev
+    ports:
+      - "3001:3006"  # Adjust the port as needed
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+  
+  #Organisation Microservice
+  org:
+    build:
+      context: ./organisation
+    container_name: org-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./organisation/.env.dev
+    ports:
+      - "3002:3005"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  #Project Microservice
+  project:
+    build:
+      context: ./project
+    container_name: project-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./project/.env.dev
+    ports:
+      - "3003:3009"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  #Sprint Microservice
+  sprint:
+    build:
+      context: ./sprint
+    container_name: sprint-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./sprint/.env.dev
+    ports:
+      - "3004:3004"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  #Task Microservice
+  task:
+    build:
+      context: ./task
+    container_name: task-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./task/.env.dev
+    ports:
+      - "3005:3002"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  #Attachments Microservice
+  attachments:
+    build:
+      context: ./attachments
+    container_name: attachments-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./attachments/.env.dev
+    ports:
+      - "3006:3003"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  #Comment Microservice
+  comment:
+    build:
+      context: ./comment
+    container_name: comment-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./comment/.env.dev
+    ports:
+      - "3007:3001"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  #Mailer Microservice
+  mailer:
+    build:
+      context: ./mail-trigger
+    container_name: mail-trigger-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    env_file:
+      - ./mail-trigger/.env.dev
+    ports:
+      - "3008:3011"
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+
+  #Notification Microservice
+  # notification:
+  #   build:
+  #     context: ./notification
+  #   container_name: notification-service
+  #   environment:
+  #     - RABBITMQ_URL=amqp://rabbitmq:5672
+  #   env_file:
+  #     - ./notification/.env.dev
+  #   ports:
+  #     - "3009:3010"
+  #   depends_on:
+  #     - rabbitmq
+  #   networks:
+  #     - app-network
+
+networks:
+  app-network:
+    driver: bridge

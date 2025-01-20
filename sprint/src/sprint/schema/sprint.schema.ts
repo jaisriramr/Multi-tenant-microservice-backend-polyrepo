@@ -9,8 +9,8 @@ export class Sprint {
   @Prop({ required: true })
   org_id: string;
 
-  @Prop({ required: true })
-  is_backlog: boolean;
+  // @Prop({ required: true })
+  // is_backlog: boolean;
 
   @Prop({ required: true })
   project_id: Types.ObjectId;

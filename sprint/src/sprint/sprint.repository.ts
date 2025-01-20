@@ -15,6 +15,12 @@ export class SprintRepository {
     return await this.sprintModel.create(createSprintDto);
   }
 
+  async getSprintCount(org_id: string): Promise<any> {
+    return await this.sprintModel
+      .find({ org_id: new Types.ObjectId(org_id) })
+      .countDocuments();
+  }
+
   async read(sprint_id: string): Promise<any> {
     return await this.sprintModel.findOne({
       _id: new Types.ObjectId(sprint_id),
